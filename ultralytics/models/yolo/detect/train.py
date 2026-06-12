@@ -116,7 +116,12 @@ class DetectionTrainer(BaseTrainer):
         for k, v in batch.items():
             if isinstance(v, torch.Tensor):
                 batch[k] = v.to(self.device, non_blocking=self.device.type == "cuda")
-        batch["img"] = batch["img"].float() / 255
+        # batch["img"] = batch["img"].float() / 255
+
+        """### Modify for NNE"""
+        batch['img'] = batch['img'].to(self.device, non_blocking=True).float()
+        batch['img'] = (batch['img'] - 128) / 128.0
+        
         if self.args.multi_scale > 0.0:
             imgs = batch["img"]
             sz = (

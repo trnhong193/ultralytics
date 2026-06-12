@@ -71,7 +71,10 @@ class DetectionValidator(BaseValidator):
         for k, v in batch.items():
             if isinstance(v, torch.Tensor):
                 batch[k] = v.to(self.device, non_blocking=self.device.type == "cuda")
-        batch["img"] = (batch["img"].half() if self.args.half else batch["img"].float()) / 255
+        # batch["img"] = (batch["img"].half() if self.args.half else batch["img"].float()) / 255
+        batch["img"] = batch["img"].half() if self.args.half else batch["img"].float()
+        batch["img"] = (batch["img"] - 128) / 128.0
+        
         return batch
 
     def init_metrics(self, model: torch.nn.Module) -> None:
