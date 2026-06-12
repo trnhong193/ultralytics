@@ -8,6 +8,7 @@ import math
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 __all__ = (
     "CBAM",
@@ -26,7 +27,11 @@ __all__ = (
     "SpatialAttention",
 )
 
-
+class ReLU4(nn.Module):
+    @staticmethod
+    def forward(x):
+        return F.hardtanh(x, 0, 4)
+    
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     """Pad to 'same' shape outputs."""
     if d > 1:
@@ -46,7 +51,7 @@ class Conv(nn.Module):
         default_act (nn.Module): Default activation function (SiLU).
     """
 
-    default_act = nn.SiLU()  # default activation
+    default_act = ReLU4() # nn.SiLU()  # default activation
 
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
         """Initialize Conv layer with given parameters.
